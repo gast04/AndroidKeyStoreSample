@@ -175,10 +175,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.btn_del:
                 pin_round--;
+                if (inputpin.length() > 0) {
+                    inputpin = inputpin.substring(0, inputpin.length() - 1);
+                }
                 break;
         }
-        if(pin_round < 0)
+        if(pin_round < 0) {
             pin_round = 0;
+            inputpin = "";
+        }
 
         rbtnSetting();
 
@@ -187,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
             // do checking of PIN
             if(pin_handler.verifyPIN(inputpin)){
                 txtSuccess.setText("Correct Password: " + inputpin);
+                // TODO: open secret layout
             }
             else {
                 txtSuccess.setText("Wrong Password: " + inputpin);
