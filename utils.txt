@@ -1,0 +1,162 @@
+
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+     public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+    //**********************************************************************************************
+    // KeyStore Code
+    //**********************************************************************************************
+
+    private static final String PIN_STORAGE_ALIAS = "PinStorage";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    private static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+    private KeyStore keyStore;
+
+    private byte[] encryption;
+    private byte[] iv;
+
+    // ENCRYPTION CODE
+
+    private SecretKey getSecretKeyEnc(final String alias) throws NoSuchProviderException,
+            InvalidAlgorithmParameterException, NoSuchAlgorithmException
+    {
+        final KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+
+        keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .build());
+
+        return keyGenerator.generateKey();
+    }
+
+    byte[] encryptText(final String alias, final String textToEncrypt)
+            throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException,
+            InvalidKeyException, IOException, InvalidAlgorithmParameterException,
+            BadPaddingException, IllegalBlockSizeException {
+
+        byte[] miv = new  byte[16];
+        SecureRandom r = new SecureRandom();
+        r.nextBytes(miv);
+
+
+        final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        cipher.init(Cipher.ENCRYPT_MODE, getSecretKeyEnc(alias));
+
+        iv = cipher.getIV();
+        System.out.println(iv);
+
+        return (encryption = cipher.doFinal(textToEncrypt.getBytes("UTF-8")));
+    }
+
+    // DECRYPTION CODE
+    private void initKeyStore() throws KeyStoreException, CertificateException,
+            NoSuchAlgorithmException, IOException {
+        keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+        keyStore.load(null);
+    }
+
+    private SecretKey getSecretKeyDec(final String alias) throws NoSuchAlgorithmException,
+            UnrecoverableEntryException, KeyStoreException {
+        return ((KeyStore.SecretKeyEntry) keyStore.getEntry(alias, null)).getSecretKey();
+    }
+
+    String decryptData(final String alias, final byte[] encryptedData, final byte[] encryptionIv)
+            throws UnrecoverableEntryException, NoSuchAlgorithmException, KeyStoreException,
+            NoSuchPaddingException, InvalidKeyException, IOException,
+            BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+
+        final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        final GCMParameterSpec spec = new GCMParameterSpec(128, encryptionIv);
+        cipher.init(Cipher.DECRYPT_MODE, getSecretKeyDec(alias), spec);
+
+        return new String(cipher.doFinal(encryptedData), "UTF-8");
+    }
+
+
+
+    public void encryptMessage(View view) {
+
+        try {
+            TextView txtContent = findViewById(R.id.txtContent);
+            encryptText(PIN_STORAGE_ALIAS, txtContent.getText().toString());
+
+            TextView txtviewIV = findViewById(R.id.txtIV);
+            txtContent.setText(bytesToHex(encryption));
+            txtviewIV.setText(bytesToHex(iv));
+        }
+        catch(Exception ex){
+            System.out.println("Could not encrypt data");
+        }
+    }
+
+    public void decryptMessage(View view) {
+
+        try {
+            TextView txtContent = findViewById(R.id.txtContent);
+            TextView txtIV = findViewById(R.id.txtIV);
+
+            String enc_data = txtContent.getText().toString();
+            String enc_iv = txtIV.getText().toString();
+
+            initKeyStore();
+            String msg = decryptData(PIN_STORAGE_ALIAS, hexStringToByteArray(enc_data), hexStringToByteArray(enc_iv));
+
+            txtContent.setText(msg);
+            txtIV.setText("");
+        }
+        catch(Exception ex) {
+            System.out.println("Could not decrypt data");
+        }
+    }
+
+    public void saveMessage(View view) {
+
+        if(iv == null)
+            return;
+
+        System.out.println("IV length: " + iv.length);
+
+        byte[] data = new byte[iv.length + encryption.length];
+        System.arraycopy(iv, 0, data, 0, iv.length);
+        System.arraycopy(encryption, 0, data, iv.length, encryption.length);
+        writeToFile(data);
+    }
+
+    public void loadMessage(View view) {
+
+        byte[] data = readFromFile();
+        if(data == null)
+            return;
+
+        iv = new byte[12];
+        encryption = new byte[data.length-12];
+
+        System.arraycopy(data, 0, iv, 0, 12);
+        System.arraycopy(data, 12, encryption, 0, data.length-12);
+
+        TextView txtviewContent = findViewById(R.id.txtContent);
+        TextView txtviewIV = findViewById(R.id.txtIV);
+        txtviewContent.setText(bytesToHex(encryption));
+        txtviewIV.setText(bytesToHex(iv));
+
+    }

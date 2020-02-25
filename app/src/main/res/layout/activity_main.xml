@@ -13,7 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
         android:layout_marginTop="90dp"
         android:onClick="sendMessage"
         android:text="EINS"
@@ -218,91 +217,5 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/txtEnDeCrypt"
-        android:layout_width="177dp"
-        android:layout_height="29dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="396dp"
-        android:fontFamily="casual"
-        android:lineSpacingExtra="12sp"
-        android:text="En/DeCrypt Sample"
-        android:textColor="@android:color/background_dark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="En/DeCrypt Sample" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:onClick="encryptMessage"
-        android:text="ENC"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtEnDeCrypt"
-        tools:text="ENC" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:onClick="decryptMessage"
-        android:text="DEC"
-        app:layout_constraintStart_toEndOf="@+id/button4"
-        app:layout_constraintTop_toBottomOf="@+id/txtEnDeCrypt"
-        tools:text="DEC" />
-
-    <Button
-        android:id="@+id/btnStore"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:onClick="saveMessage"
-        android:text="Store"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtIV"
-        tools:text="Store" />
-
-    <Button
-        android:id="@+id/btnStore2"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="8dp"
-        android:onClick="loadMessage"
-        android:text="Load"
-        app:layout_constraintStart_toEndOf="@+id/btnStore"
-        app:layout_constraintTop_toBottomOf="@+id/txtIV"
-        tools:text="Load" />
-
-    <EditText
-        android:id="@+id/txtContent"
-        android:layout_width="375dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button5" />
-
-    <EditText
-        android:id="@+id/txtIV"
-        android:layout_width="375dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="44dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button5" />
 
 </android.support.constraint.ConstraintLayout>
