@@ -192,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
             // do checking of PIN
             if(pin_handler.verifyPIN(inputpin)){
                 txtSuccess.setText("Correct Password: " + inputpin);
-                // TODO: open secret layout
+                setContentView(R.layout.mainapp);
+                return; // end function after layout switch
             }
             else {
                 txtSuccess.setText("Wrong Password: " + inputpin);
