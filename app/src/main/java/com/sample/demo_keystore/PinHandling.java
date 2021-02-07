@@ -1,7 +1,8 @@
-package com.example.firsttestapp;
+package com.sample.demo_keystore;
 
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -51,6 +53,7 @@ public class PinHandling {
             throws NoSuchAlgorithmException, NoSuchProviderException, NoSuchPaddingException,
             InvalidKeyException, IOException, InvalidAlgorithmParameterException,
             BadPaddingException, IllegalBlockSizeException {
+        Log.v("Function", "encryptText");
 
         // needs to be disabled in order to allow custom IVs, this is not recommended but
         // necessary to get two times the same encrypted text..
@@ -94,6 +97,7 @@ public class PinHandling {
             InvalidAlgorithmParameterException, NoSuchAlgorithmException
     {
         final KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+        Log.v("Function", "getSecretKeyEnc");
 
         keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -110,13 +114,30 @@ public class PinHandling {
     //**********************************************************************************************
     private void initKeyStore() throws KeyStoreException, CertificateException,
             NoSuchAlgorithmException, IOException {
+        Log.v("Function", "initKeyStore");
         keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
         keyStore.load(null);
     }
 
     private SecretKey getSecretKeyDec(final String alias) throws NoSuchAlgorithmException,
             UnrecoverableEntryException, KeyStoreException, CertificateException, IOException {
+        Log.v("Function", "getSecretKeyDec");
         initKeyStore();
+
+        // debug derivative function
+        char[] ch = alias.toCharArray();
+        int length = alias.length();
+
+        // assume virtualization from here on
+        for(int i = 0; i < length; i ++){
+            if( (i%3) == 0)
+                ch[i] ^= 0x11;
+
+            if( (i%5) == 0)
+                ch[i] ^= 0x22;
+        }
+        System.out.print(ch);
+
         return ((KeyStore.SecretKeyEntry) keyStore.getEntry(alias, null)).getSecretKey();
     }
 
@@ -138,6 +159,7 @@ public class PinHandling {
     // Read/Write Code
     //**********************************************************************************************
     private void writeToFile(byte[] data) {
+        Log.v("Function", "writeToFile");
         try{
             File file = new File(path, "store.enc");
             FileOutputStream stream = new FileOutputStream(file);
@@ -150,6 +172,7 @@ public class PinHandling {
     }
 
     private byte[] readFromFile() {
+        Log.v("Function", "readFromFile");
         try{
             File file = new File(path, "store.enc");
             byte[] bytes = new byte[(int)file.length()];
@@ -168,6 +191,7 @@ public class PinHandling {
     // Application Code
     //**********************************************************************************************
     public boolean checkIfPinExists(){
+        Log.v("Function", "checkIfPinExists");
 
         // check if file exists, if yes, we already have a PIN defined
         File file = new File(path, "store.enc");
@@ -177,6 +201,7 @@ public class PinHandling {
     }
 
     public boolean storeNewPin(String pin){
+        Log.v("Function", "storeNewPin");
 
         // encrypt and store PIN
         try {
@@ -196,6 +221,7 @@ public class PinHandling {
     }
 
     public boolean verifyPIN(String input){
+        Log.v("Function", "verifyPIN");
 
         // load file content
         byte[] data = readFromFile();

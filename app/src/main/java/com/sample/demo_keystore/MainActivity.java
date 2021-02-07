@@ -1,10 +1,8 @@
-package com.example.firsttestapp;
+package com.sample.demo_keystore;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+//import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -13,24 +11,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import java.util.logging.Logger;
+import com.bumptech.glide.Glide;
+
+import java.util.Random;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private PinHandling pin_handler;
     private Button btnFirstPin;
+    private ImageView gifView;
+    private boolean gif_enabled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        int ret = calcOffset(25,13,"helloWorld");
-
-        ret = ret + 1;
+        Log.v("Function", "onCreate");
 
         // create new pinhandler instance
         pin_handler = new PinHandling(MainActivity.this.getFilesDir());
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
             btnFirstPin =  findViewById(R.id.btnFirstPinGeneration);
             EditText txtPin =  findViewById(R.id.txtPIN);
-            if (txtPin == null){
+            if (txtPin == null) {
                 // not found, should never happen
             }
 
@@ -90,20 +90,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private int calcOffset(int a, int b, String msg){
-        Log.v("NIKU", msg);
-
-        int max = b;
-        if (a > b){
-            max = a;
-        }
-
-        for( int i = 1; i<max+1; i++){
-            a = b*i;
-        }
-
-        return a;
-    }
 
     //**********************************************************************************************
     // Application Code
@@ -112,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
     String inputpin = "";
     int pin_round = 0;
 
-    private void resetAllRbtn(){
+    private void resetAllRbtn() {
+        Log.v("Function", "resetAllRbtn");
 
         RadioButton rbtn = findViewById(R.id.rbtn1);
         rbtn.setChecked(false);
@@ -128,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void rbtnSetting() {
+        Log.v("Function", "rbtnSetting");
 
         RadioButton rbtn = findViewById(R.id.rbtn1);
         if (pin_round >= 1)
@@ -152,21 +140,16 @@ public class MainActivity extends AppCompatActivity {
             rbtn.setChecked(true);
         else
             rbtn.setChecked(false);
+
+        // extra debug code
+        Random random = new Random();
+
+        int a = random.nextInt(200);
+        int b = random.nextInt(200);
     }
 
     public void sendMessage(View view) {
-
-        TextView txtDebug = findViewById(R.id.txtDebug);
-        int perm_calendar = ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.WRITE_CALENDAR);
-        txtDebug.setText("Calendar Perm: " + perm_calendar);
-
-        int perm_internet = ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.INTERNET);
-        txtDebug.setText(txtDebug.getText() +  "\nInternet Perm: " + perm_internet);
-
-        int granted = PackageManager.PERMISSION_GRANTED;
-        txtDebug.setText(txtDebug.getText() +  "\nGranted: " + granted);
-
-
+        Log.v("Function", "sendMessage");
         switch (view.getId()) {
             case R.id.btn1:
                 inputpin += "1";
@@ -228,6 +211,12 @@ public class MainActivity extends AppCompatActivity {
             if(pin_handler.verifyPIN(inputpin)){
                 txtSuccess.setText("Correct Password: " + inputpin);
                 setContentView(R.layout.mainapp);
+
+                // load gif on startup
+                gifView = findViewById(R.id.imageViewGif);
+                Glide.with(this).load("https://media.giphy.com/media/FbPsiH5HTH1Di/giphy.gif").into(gifView);
+                gif_enabled = true;
+
                 return; // end function after layout switch
             }
             else {
@@ -243,13 +232,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void firstLoginDone(View view) {
+        Log.v("Function", "firstLoginDone");
 
         EditText txtPin = findViewById(R.id.txtPIN);
         if (pin_handler.storeNewPin(txtPin.getText().toString())) {
             // switch to MainView
             setContentView(R.layout.activity_main);
         }
-
     }
 
+    //**********************************************************************************************
+    // After Login Code
+    //**********************************************************************************************
+
+    TextView txtValue;
+
+    //SecureInt32 secint32 = new SecureInt32(0);
+    //int secint32 = 0;
+
+    int value = 0;
+
+    public void IncVal(View view) {
+        Log.v("Function", "IncVal");
+        //secint32.add(1);
+        value ++;
+        txtValue = findViewById(R.id.txtValue);
+        //txtValue.setText("" + secint32.getValue());
+        txtValue.setText("" + value);
+    }
+
+    public void DecVal(View view) {
+        Log.v("Function", "DecVal");
+
+        //secint32.sub(1);
+        value --;
+        txtValue = findViewById(R.id.txtValue);
+        //txtValue.setText("" + secint32.getValue());
+        txtValue.setText("" + value);
+    }
+
+    public void btnDisableGifOnClick(View view) {
+        if (gif_enabled) {
+            gifView.setImageDrawable(null);
+        }
+        else {
+            Glide.with(this).load("https://media.giphy.com/media/FbPsiH5HTH1Di/giphy.gif").into(gifView);
+        }
+        gif_enabled = !gif_enabled;
+    }
 }

@@ -7,7 +7,7 @@
     android:baselineAligned="false"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -15,24 +15,23 @@
             android:id="@+id/btnFirstPinGeneration"
             android:layout_width="167dp"
             android:layout_height="52dp"
-            android:layout_marginStart="120dp"
-            android:layout_marginTop="204dp"
+            android:layout_marginTop="68dp"
             android:enabled="false"
             android:onClick="firstLoginDone"
             android:text="Save Pin"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/txtPIN" />
 
         <EditText
             android:id="@+id/txtPIN"
             android:layout_width="132dp"
             android:layout_height="43dp"
-            android:layout_marginStart="136dp"
             android:layout_marginTop="40dp"
             android:ems="10"
             android:inputType="numberPassword"
             android:maxLength="4"
-            android:onClick="sendMessage"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -40,7 +39,6 @@
             android:id="@+id/textView"
             android:layout_width="310dp"
             android:layout_height="35dp"
-            android:layout_marginStart="60dp"
             android:layout_marginTop="16dp"
             android:editable="false"
             android:enabled="true"
@@ -48,6 +46,7 @@
             android:textColor="@android:color/black"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -56,15 +55,17 @@
             android:layout_width="48dp"
             android:layout_height="31dp"
             android:layout_marginStart="72dp"
-            android:layout_marginTop="88dp"
+            android:layout_marginTop="100dp"
             android:editable="false"
             android:enabled="true"
             android:text="PIN:"
             android:textColor="@android:color/black"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/txtPIN"
+            app:layout_constraintHorizontal_bias="0.1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

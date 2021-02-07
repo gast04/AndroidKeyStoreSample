@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinatorLayout"
@@ -12,10 +12,11 @@
         android:id="@+id/btn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="88dp"
         android:onClick="sendMessage"
         android:text="EINS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="EINS" />
@@ -24,12 +25,10 @@
         android:id="@+id/btn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="88dp"
         android:onClick="sendMessage"
         android:text="ZWEI"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn1"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="ZWEI" />
 
@@ -37,12 +36,10 @@
         android:id="@+id/btn3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="264dp"
-        android:layout_marginLeft="264dp"
-        android:layout_marginTop="90dp"
+        android:layout_marginTop="88dp"
         android:onClick="sendMessage"
         android:text="DREI"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn2"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="DREI" />
 
@@ -50,11 +47,11 @@
         android:id="@+id/btn4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
         android:layout_marginTop="136dp"
         android:onClick="sendMessage"
         android:text="VIER"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="VIER" />
@@ -63,12 +60,10 @@
         android:id="@+id/btn5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
         android:layout_marginTop="136dp"
         android:onClick="sendMessage"
         android:text="FÜNF"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn4"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="FÜNF" />
 
@@ -76,12 +71,10 @@
         android:id="@+id/btn6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="264dp"
-        android:layout_marginLeft="264dp"
         android:layout_marginTop="136dp"
         android:onClick="sendMessage"
         android:text="SECHS"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn5"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="SECHS" />
 
@@ -89,11 +82,11 @@
         android:id="@+id/btn7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
         android:layout_marginTop="184dp"
         android:onClick="sendMessage"
         android:text="SIEBEN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="SIEBEN" />
@@ -102,12 +95,10 @@
         android:id="@+id/btn8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
         android:layout_marginTop="184dp"
         android:onClick="sendMessage"
         android:text="ACHT"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn7"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="ACHT" />
 
@@ -115,12 +106,10 @@
         android:id="@+id/btn9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="264dp"
-        android:layout_marginLeft="264dp"
         android:layout_marginTop="184dp"
         android:onClick="sendMessage"
         android:text="NEUN"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn8"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="NEUN" />
 
@@ -128,24 +117,21 @@
         android:id="@+id/btn_null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="176dp"
-        android:layout_marginLeft="176dp"
         android:layout_marginTop="232dp"
         android:onClick="sendMessage"
         android:text="NULL"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_del"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="NULL" />
 
     <Button
         android:id="@+id/btn_ok"
-        android:layout_width="85dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="268dp"
         android:layout_marginTop="232dp"
         android:onClick="sendMessage"
         android:text="OK"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_null"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="OK" />
 
@@ -153,11 +139,11 @@
         android:id="@+id/btn_del"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginLeft="80dp"
         android:layout_marginTop="232dp"
         android:onClick="sendMessage"
         android:text="X"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.182"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="X" />
@@ -166,10 +152,11 @@
         android:id="@+id/rbtn1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="152dp"
         android:layout_marginTop="310dp"
         android:checked="false"
         android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.34"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -177,52 +164,42 @@
         android:id="@+id/rbtn2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="184dp"
         android:layout_marginTop="310dp"
         android:clickable="false"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rbtn1"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
         android:id="@+id/rbtn3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="216dp"
         android:layout_marginTop="310dp"
         android:clickable="false"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rbtn2"
         app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
         android:id="@+id/rbtn4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="248dp"
         android:layout_marginTop="310dp"
         android:checked="false"
         android:clickable="false"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/rbtn3"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/txtSuccess"
         android:layout_width="227dp"
         android:layout_height="40dp"
-        android:layout_marginStart="108dp"
         android:layout_marginTop="356dp"
         android:fontFamily="casual"
         android:lineSpacingExtra="12sp"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/txtDebug"
-        android:layout_width="373dp"
-        android:layout_height="278dp"
-        tools:layout_editor_absoluteX="20dp"
-        tools:layout_editor_absoluteY="431dp" />
-
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
