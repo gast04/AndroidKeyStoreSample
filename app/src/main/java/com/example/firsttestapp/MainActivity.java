@@ -1,9 +1,13 @@
 package com.example.firsttestapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +15,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import java.util.logging.Logger;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -21,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        int ret = calcOffset(25,13,"helloWorld");
+
+        ret = ret + 1;
 
         // create new pinhandler instance
         pin_handler = new PinHandling(MainActivity.this.getFilesDir());
@@ -80,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private int calcOffset(int a, int b, String msg){
+        Log.v("NIKU", msg);
+
+        int max = b;
+        if (a > b){
+            max = a;
+        }
+
+        for( int i = 1; i<max+1; i++){
+            a = b*i;
+        }
+
+        return a;
+    }
 
     //**********************************************************************************************
     // Application Code
@@ -131,6 +155,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view) {
+
+        TextView txtDebug = findViewById(R.id.txtDebug);
+        int perm_calendar = ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.WRITE_CALENDAR);
+        txtDebug.setText("Calendar Perm: " + perm_calendar);
+
+        int perm_internet = ContextCompat.checkSelfPermission(this.getBaseContext(), Manifest.permission.INTERNET);
+        txtDebug.setText(txtDebug.getText() +  "\nInternet Perm: " + perm_internet);
+
+        int granted = PackageManager.PERMISSION_GRANTED;
+        txtDebug.setText(txtDebug.getText() +  "\nGranted: " + granted);
+
 
         switch (view.getId()) {
             case R.id.btn1:

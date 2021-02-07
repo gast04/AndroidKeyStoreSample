@@ -218,4 +218,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/txtDebug"
+        android:layout_width="373dp"
+        android:layout_height="278dp"
+        tools:layout_editor_absoluteX="20dp"
+        tools:layout_editor_absoluteY="431dp" />
+
 </android.support.constraint.ConstraintLayout>
