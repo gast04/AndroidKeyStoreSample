@@ -1,7 +1,6 @@
 package com.sample.demo_keystore;
 
 import android.os.Bundle;
-//import android.support.v7.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,14 +13,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
-
-// import com.sample.demo_keystore.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -121,34 +116,16 @@ public class MainActivity extends AppCompatActivity {
         Log.v("Function", "rbtnSetting");
 
         RadioButton rbtn = findViewById(R.id.rbtn1);
-        if (pin_round >= 1)
-            rbtn.setChecked(true);
-        else
-            rbtn.setChecked(false);
+        rbtn.setChecked(pin_round >= 1);
 
         rbtn = findViewById(R.id.rbtn2);
-        if (pin_round >= 2)
-            rbtn.setChecked(true);
-        else
-            rbtn.setChecked(false);
+        rbtn.setChecked(pin_round >= 2);
 
         rbtn = findViewById(R.id.rbtn3);
-        if (pin_round >= 3)
-            rbtn.setChecked(true);
-        else
-            rbtn.setChecked(false);
+        rbtn.setChecked(pin_round >= 3);
 
         rbtn = findViewById(R.id.rbtn4);
-        if (pin_round == 4)
-            rbtn.setChecked(true);
-        else
-            rbtn.setChecked(false);
-
-        // extra debug code
-        Random random = new Random();
-
-        int a = random.nextInt(200);
-        int b = random.nextInt(200);
+        rbtn.setChecked(pin_round == 4);
     }
 
     private static final Map<Integer, String> DIGIT_MAP = new HashMap<>();
@@ -168,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
     public void sendMessage(View view) {
         Log.v("Function", "sendMessage");
 
-
         if (view.getId() == R.id.btn_del) {
             pin_round--;
             if(pin_round < 0) {
@@ -180,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
                 inputpin = inputpin.substring(0, inputpin.length() - 1);
             }
         }
+        else if (view.getId() == R.id.btn_ok) {
+            // do nothing
+        }
         else {
             pin_round++;
             inputpin += DIGIT_MAP.get(view.getId());
@@ -188,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
         rbtnSetting();
 
         TextView txtSuccess = findViewById(R.id.txtSuccess);
-        if(pin_round == 4){
+        if(pin_round == 4) {
             // do checking of PIN
-            if(pin_handler.verifyPIN(inputpin)){
+            if(pin_handler.verifyPIN(inputpin)) {
                 txtSuccess.setText("Correct Password: " + inputpin);
                 setContentView(R.layout.mainapp);
 
