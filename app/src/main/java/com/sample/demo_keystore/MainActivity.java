@@ -17,8 +17,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
+// import com.sample.demo_keystore.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
             // first login, we have to generate a login PIN
             setContentView(R.layout.pingeneration);
 
-            btnFirstPin =  findViewById(R.id.btnFirstPinGeneration);
-            EditText txtPin =  findViewById(R.id.txtPIN);
+            btnFirstPin = findViewById(R.id.btnFirstPinGeneration);
+            EditText txtPin = findViewById(R.id.txtPIN);
             if (txtPin == null) {
                 // not found, should never happen
             }
@@ -148,59 +151,38 @@ public class MainActivity extends AppCompatActivity {
         int b = random.nextInt(200);
     }
 
+    private static final Map<Integer, String> DIGIT_MAP = new HashMap<>();
+    static {
+        DIGIT_MAP.put(R.id.btn1, "1");
+        DIGIT_MAP.put(R.id.btn2, "2");
+        DIGIT_MAP.put(R.id.btn3, "3");
+        DIGIT_MAP.put(R.id.btn4, "4");
+        DIGIT_MAP.put(R.id.btn5, "5");
+        DIGIT_MAP.put(R.id.btn6, "6");
+        DIGIT_MAP.put(R.id.btn7, "7");
+        DIGIT_MAP.put(R.id.btn8, "8");
+        DIGIT_MAP.put(R.id.btn9, "9");
+        DIGIT_MAP.put(R.id.btn_null, "0");
+    }
+
     public void sendMessage(View view) {
         Log.v("Function", "sendMessage");
-        switch (view.getId()) {
-            case R.id.btn1:
-                inputpin += "1";
-                pin_round++;
-                break;
-            case R.id.btn2:
-                inputpin += "2";
-                pin_round++;
-                break;
-            case R.id.btn3:
-                inputpin += "3";
-                pin_round++;
-                break;
-            case R.id.btn4:
-                inputpin += "4";
-                pin_round++;
-                break;
-            case R.id.btn5:
-                inputpin += "5";
-                pin_round++;
-                break;
-            case R.id.btn6:
-                inputpin += "6";
-                pin_round++;
-                break;
-            case R.id.btn7:
-                inputpin += "7";
-                pin_round++;
-                break;
-            case R.id.btn8:
-                inputpin += "8";
-                pin_round++;
-                break;
-            case R.id.btn9:
-                inputpin += "9";
-                pin_round++;
-                break;
-            case R.id.btn_null:
-                inputpin += "0";
-                pin_round++;
-                break;
-            case R.id.btn_del:
-                pin_round--;
-                if (inputpin.length() > 0) {
-                    inputpin = inputpin.substring(0, inputpin.length() - 1);
-                }
-                break;
+
+
+        if (view.getId() == R.id.btn_del) {
+            pin_round--;
+            if(pin_round < 0) {
+                pin_round = 0;
+                inputpin = "";
+            }
+
+            if (!inputpin.isEmpty()) {
+                inputpin = inputpin.substring(0, inputpin.length() - 1);
+            }
         }
-        if(pin_round < 0) {
-            pin_round = 0;
-            inputpin = "";
+        else {
+            pin_round++;
+            inputpin += DIGIT_MAP.get(view.getId());
         }
 
         rbtnSetting();

@@ -3,17 +3,18 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
+        namespace "com.sample.demo_keystore"
         applicationId "com.sample.demo_keystore"
         minSdkVersion 25
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled true  // shrink
-            useProguard true    // obfuscate
+            //minifyEnabled true  // shrink
+            //useProguard true    // obfuscate
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
