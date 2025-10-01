@@ -10,9 +10,11 @@
         android:label="Demo Keystore"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
+            android:exported="true"
             android:label="DK2"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

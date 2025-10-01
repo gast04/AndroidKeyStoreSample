@@ -3,14 +3,11 @@ package com.sample.demo_keystore;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -21,7 +18,6 @@ import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -30,7 +26,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.IvParameterSpec;
 
 public class PinHandling {
 
@@ -97,7 +92,7 @@ public class PinHandling {
             InvalidAlgorithmParameterException, NoSuchAlgorithmException
     {
         final KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-        Log.v("Function", "getSecretKeyEnc");
+        Log.v(constants.FUNCTAG, "getSecretKeyEnc");
 
         keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
@@ -114,14 +109,14 @@ public class PinHandling {
     //**********************************************************************************************
     private void initKeyStore() throws KeyStoreException, CertificateException,
             NoSuchAlgorithmException, IOException {
-        Log.v("Function", "initKeyStore");
+        Log.v(constants.FUNCTAG, "initKeyStore");
         keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
         keyStore.load(null);
     }
 
     private SecretKey getSecretKeyDec(final String alias) throws NoSuchAlgorithmException,
             UnrecoverableEntryException, KeyStoreException, CertificateException, IOException {
-        Log.v("Function", "getSecretKeyDec");
+        Log.v(constants.FUNCTAG, "getSecretKeyDec");
         initKeyStore();
 
         // debug derivative function
@@ -159,7 +154,7 @@ public class PinHandling {
     // Read/Write Code
     //**********************************************************************************************
     private void writeToFile(byte[] data) {
-        Log.v("Function", "writeToFile");
+        Log.v(constants.FUNCTAG, "writeToFile");
         try{
             File file = new File(path, "store.enc");
             FileOutputStream stream = new FileOutputStream(file);
@@ -172,7 +167,7 @@ public class PinHandling {
     }
 
     private byte[] readFromFile() {
-        Log.v("Function", "readFromFile");
+        Log.v(constants.FUNCTAG, "readFromFile");
         try{
             File file = new File(path, "store.enc");
             byte[] bytes = new byte[(int)file.length()];
@@ -191,7 +186,7 @@ public class PinHandling {
     // Application Code
     //**********************************************************************************************
     public boolean checkIfPinExists(){
-        Log.v("Function", "checkIfPinExists");
+        Log.v(constants.FUNCTAG, "checkIfPinExists");
 
         // check if file exists, if yes, we already have a PIN defined
         File file = new File(path, "store.enc");
@@ -201,7 +196,7 @@ public class PinHandling {
     }
 
     public boolean storeNewPin(String pin){
-        Log.v("Function", "storeNewPin");
+        Log.v(constants.FUNCTAG, "storeNewPin");
 
         // encrypt and store PIN
         try {
@@ -209,7 +204,7 @@ public class PinHandling {
                 return false;
         }
         catch(Exception ex) {
-            System.out.println("Could not encrypt data");
+            Log.e(constants.FUNCTAG, "Could not encrypt data");
             return false;
         }
 
@@ -221,7 +216,7 @@ public class PinHandling {
     }
 
     public boolean verifyPIN(String input){
-        Log.v("Function", "verifyPIN");
+        Log.v(constants.FUNCTAG, "verifyPIN");
 
         // load file content
         byte[] data = readFromFile();
@@ -241,12 +236,10 @@ public class PinHandling {
             if(Arrays.equals(enc_vf, encryption))
                 return true;
         }
-        catch(Exception ex){
+        catch(Exception ex) {
             System.out.println("Could not encrypt data");
             return false;
         }
-
         return false;
     }
-
 }

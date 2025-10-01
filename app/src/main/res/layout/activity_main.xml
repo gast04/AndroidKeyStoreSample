@@ -195,11 +195,23 @@
         android:layout_marginTop="356dp"
         android:fontFamily="casual"
         android:lineSpacingExtra="12sp"
+        android:textAlignment="center"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.413"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="59dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtSuccess" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
