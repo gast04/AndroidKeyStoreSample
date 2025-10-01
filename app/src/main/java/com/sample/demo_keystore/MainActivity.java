@@ -1,11 +1,10 @@
 package com.sample.demo_keystore;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 
 import io.castle.android.Castle;
+import io.castle.android.CastleConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,15 +40,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean gif_enabled = false;
     private ProgressBar progressBar; // default visibility is false
 
+    private int button_ok_click_count = 0;
+
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(constants.FUNCTAG, "onCreate");
-
-        // Place the below in your Application class onCreate method
-        Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY);
 
         // NOTE: localhost will be the devices or emulators localhost
         pin_web = new PinWebHandling("http://10.13.37.73:9988/");
@@ -64,12 +63,16 @@ public class MainActivity extends AppCompatActivity {
                                 throw new RuntimeException("Token fetching failed", e);
                             }
                         });
-
         try {
             // This will block until the token is fetched
             String token = tokenFuture.get();
             Log.i(constants.LOGTAG, "Token received: " + token);
 
+            // Place the below in your Application class onCreate method
+            CastleConfiguration castle_config =
+                    new CastleConfiguration.Builder().debugLoggingEnabled(true).build();
+
+            Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY, castle_config);
             Castle.userJwt(token);
 
             String currentTime =
@@ -80,14 +83,8 @@ public class MainActivity extends AppCompatActivity {
             Log.i(constants.LOGTAG, "Token setup completed");
         } catch (Exception e) {
             Log.e(constants.LOGTAG, "Token initialization failed", e);
-            // Handle the error - you might want to show an error dialog or finish the activity
-            TextView txtSuccess = findViewById(R.id.txtSuccess);
-            if (txtSuccess != null) {
-                txtSuccess.setText("Token fetching failed");
-            }
-            disableAllButtons(true);
+            showTokenErrorDialog(e);
         }
-        Log.i(constants.LOGTAG, "Token collected");
 
         // create new pinhandler instance
         pin_handler = new PinHandling(MainActivity.this.getFilesDir());
@@ -127,34 +124,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         // Shutdown the executor service to prevent memory leaks
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();
         }
+    }
+
+    private void showTokenErrorDialog(Exception error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Castle Token Error")
+                .setMessage("Error: " + error.getMessage())
+                .setCancelable(false) // Cannot be dismissed by clicking outside
+                .setOnKeyListener(
+                        (dialog, keyCode, event) -> {
+                            // Prevent back button from dismissing the dialog
+                            return true;
+                        })
+                .setNegativeButton(
+                        "Close",
+                        (dialog, which) -> {
+                            finishAffinity();
+                            System.exit(0);
+                        });
+
+        AlertDialog dialog = builder.create();
+        dialog.setCanceledOnTouchOutside(false); // Cannot be dismissed by touching outside
+        dialog.show();
     }
 
     // **********************************************************************************************
@@ -243,7 +240,17 @@ public class MainActivity extends AppCompatActivity {
                 inputpin = inputpin.substring(0, inputpin.length() - 1);
             }
         } else if (view.getId() == R.id.btn_ok) {
-            // do nothing
+            // do nothing, but send a custom event
+            String currentTime =
+                    new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+            button_ok_click_count += 1;
+            Log.d(constants.LOGTAG, "button ok count: " + button_ok_click_count);
+
+            Castle.custom(
+                    "ButtonOk_" + button_ok_click_count,
+                    Map.of("time", currentTime, "cnt", button_ok_click_count));
+            Castle.flush();
         } else {
             pin_round++;
             inputpin += DIGIT_MAP.get(view.getId());
