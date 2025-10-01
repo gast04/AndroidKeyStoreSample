@@ -13,3 +13,4 @@
 .externalNativeBuild
 
 backend_python/.env
+app/libs
