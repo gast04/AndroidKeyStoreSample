@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+// apply plugin: 'com.kezong.fat-aar'
 
 android {
     compileSdkVersion 36
@@ -27,6 +28,10 @@ android {
     }
 }
 
+repositories {
+    flatDir { dirs 'libs' }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
@@ -36,11 +41,14 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
     implementation 'com.github.bumptech.glide:glide:5.0.5'   // to show a GIF
-
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:5.1.0'  // optional, for logging
     implementation 'com.squareup.okhttp3:okhttp:5.1.0'
 
-    api 'io.castle.android:castle:3.1.1'
+    // castle needed includes
+    implementation 'com.squareup.tape2:tape:2.0.0-beta1'
+    implementation(name: 'highwind-1.5.0', ext: 'aar', version: '1.5.0', group:'castle')
+
+    api 'com.scottyab:rootbeer-lib:0.1.1' // wait what?
 }
