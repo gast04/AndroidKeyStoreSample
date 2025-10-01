@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private int button_ok_click_count = 0;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService parallelExecutor = Executors.newFixedThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,10 @@ public class MainActivity extends AppCompatActivity {
 
             // Place the below in your Application class onCreate method
             CastleConfiguration castle_config =
-                    new CastleConfiguration.Builder().debugLoggingEnabled(true).build();
+                    new CastleConfiguration.Builder()
+                            .debugLoggingEnabled(false) // very verbose
+                            .flushLimit(100) // to trigger the race condition
+                            .build();
 
             Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY, castle_config);
             Castle.userJwt(token);
@@ -126,9 +130,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Shutdown the executor service to prevent memory leaks
+        // Shutdown the executor services to prevent memory leaks
         if (executor != null && !executor.isShutdown()) {
             executor.shutdown();
+        }
+        if (parallelExecutor != null && !parallelExecutor.isShutdown()) {
+            parallelExecutor.shutdown();
         }
     }
 
@@ -244,13 +251,40 @@ public class MainActivity extends AppCompatActivity {
             String currentTime =
                     new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
 
-            button_ok_click_count += 1;
-            Log.d(constants.LOGTAG, "button ok count: " + button_ok_click_count);
+            // Log.d(constants.LOGTAG, "button ok count: " + button_ok_click_count);
 
-            Castle.custom(
-                    "ButtonOk_" + button_ok_click_count,
-                    Map.of("time", currentTime, "cnt", button_ok_click_count));
+            // first try of triggering the race condition within the flush function
+            for (int i = 0; i < 100; i++) {
+                button_ok_click_count += 1;
+                Castle.custom(
+                        "ButtonOk_" + button_ok_click_count,
+                        Map.of("time", currentTime, "cnt", button_ok_click_count));
+            }
             Castle.flush();
+
+            /*
+            // Execute flush operations in parallel threads
+            parallelExecutor.submit(() -> {
+                Castle.flush();
+                Log.d(constants.LOGTAG, "Flush 1 completed");
+            });
+
+            parallelExecutor.submit(() -> {
+                Castle.flush();
+                Log.d(constants.LOGTAG, "Flush 2 completed");
+            });
+
+            parallelExecutor.submit(() -> {
+                Castle.flush();
+                Log.d(constants.LOGTAG, "Flush 3 completed");
+            });
+
+            parallelExecutor.submit(() -> {
+                Castle.flush();
+                Log.d(constants.LOGTAG, "Flush 4 completed");
+            });
+            */
+
         } else {
             pin_round++;
             inputpin += DIGIT_MAP.get(view.getId());
