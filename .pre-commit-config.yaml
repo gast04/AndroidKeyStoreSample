@@ -17,3 +17,13 @@ repos:
   hooks:
     - id: pretty-format-java
       args: [--aosp,--autofix]
+
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.4.3
+  hooks:
+    # Run the linter.
+    - id: ruff
+      files: '.*\.(ipynb|py)$'
+    # Run the formatter.
+    - id: ruff-format
+      files: '.*\.(ipynb|py)$'
