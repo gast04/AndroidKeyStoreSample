@@ -5,31 +5,29 @@
 package com.sample.demo_keystore.castle.api.model;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.util.Map;
-
 import com.sample.demo_keystore.castle.Castle;
-import com.sample.demo_keystore.castle.CastleLogger;
 import com.sample.demo_keystore.castle.Utils;
 
-/**
- * Model class for events
- */
+/** Model class for events */
 public abstract class Event {
     public static final String EVENT_TYPE_CUSTOM = "custom";
     public static final String EVENT_TYPE_SCREEN = "screen";
 
     @SerializedName("name")
     String name;
+
     @SerializedName("timestamp")
     String timestamp;
+
     @SerializedName("type")
     String type;
+
     @SerializedName("token")
     String token;
 
     /**
      * Create new event with specified name
+     *
      * @param name Event name
      */
     public Event(String name) {

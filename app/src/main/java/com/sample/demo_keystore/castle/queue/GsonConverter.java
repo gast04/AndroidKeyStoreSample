@@ -4,6 +4,7 @@
 
 package com.sample.demo_keystore.castle.queue;
 
+import com.sample.demo_keystore.castle.Utils;
 import com.squareup.tape2.ObjectQueue;
 
 import java.io.ByteArrayInputStream;
@@ -14,8 +15,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
-import com.sample.demo_keystore.castle.Utils;
-
 class GsonConverter<T> implements ObjectQueue.Converter<T> {
     private final Class<T> type;
 
@@ -23,7 +22,8 @@ class GsonConverter<T> implements ObjectQueue.Converter<T> {
         this.type = type;
     }
 
-    @Override public T from(byte[] bytes) {
+    @Override
+    public T from(byte[] bytes) {
         try {
             Reader reader = new InputStreamReader(new ByteArrayInputStream(bytes));
             return Utils.getGsonInstance().fromJson(reader, type);
@@ -33,7 +33,8 @@ class GsonConverter<T> implements ObjectQueue.Converter<T> {
         return null;
     }
 
-    @Override public void toStream(T object, OutputStream bytes) throws IOException {
+    @Override
+    public void toStream(T object, OutputStream bytes) throws IOException {
         Writer writer = new OutputStreamWriter(bytes);
         Utils.getGsonInstance().toJson(object, writer);
         writer.close();

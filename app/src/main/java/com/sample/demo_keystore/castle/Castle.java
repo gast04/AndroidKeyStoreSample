@@ -12,6 +12,14 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.sample.demo_keystore.castle.api.model.CustomEvent;
+import com.sample.demo_keystore.castle.api.model.Event;
+import com.sample.demo_keystore.castle.api.model.ScreenEvent;
+import com.sample.demo_keystore.castle.api.model.UserJwt;
+import com.sample.demo_keystore.castle.queue.EventQueue;
+
+import io.castle.highwind.android.Highwind;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -19,17 +27,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.sample.demo_keystore.castle.CastleConfiguration;
-import com.sample.demo_keystore.castle.api.model.CustomEvent;
-import com.sample.demo_keystore.castle.api.model.Event;
-import com.sample.demo_keystore.castle.api.model.ScreenEvent;
-import com.sample.demo_keystore.castle.api.model.UserJwt;
-import com.sample.demo_keystore.castle.queue.EventQueue;
-import io.castle.highwind.android.Highwind;
-
-
 /**
- * This class is the main entry point for using the Castle SDK and provides methods for tracking events, screen views, manual flushing of the event queue, allowlisting behaviour and resetting.
+ * This class is the main entry point for using the Castle SDK and provides methods for tracking
+ * events, screen views, manual flushing of the event queue, allowlisting behaviour and resetting.
  */
 public class Castle {
     public static final String requestTokenHeaderName = "X-Castle-Request-Token";
@@ -52,13 +52,19 @@ public class Castle {
 
     public static String encodeEvent(Event event) {
         if (event instanceof ScreenEvent) {
-            return getInstance().highwind.encodeScreenEvent(event.getToken(), Utils.getGsonInstance().toJson(event));
+            return getInstance()
+                    .highwind
+                    .encodeScreenEvent(event.getToken(), Utils.getGsonInstance().toJson(event));
         }
-        return getInstance().highwind.encodeCustomEvent(event.getToken(), Utils.getGsonInstance().toJson(event));
+        return getInstance()
+                .highwind
+                .encodeCustomEvent(event.getToken(), Utils.getGsonInstance().toJson(event));
     }
 
     public static String encodeUser(String userJwt) {
-        return getInstance().highwind.encodeUserJwtPayloadSet(Utils.getGsonInstance().toJson(new UserJwt(userJwt)));
+        return getInstance()
+                .highwind
+                .encodeUserJwtPayloadSet(Utils.getGsonInstance().toJson(new UserJwt(userJwt)));
     }
 
     public static String encodePayload(String userPayload, List<String> eventPayloads) {
@@ -78,9 +84,14 @@ public class Castle {
         this.eventQueue = new EventQueue(context);
 
         // TODO: fix version name
-        this.highwind = new Highwind(context, "1.5.0",
-                storageHelper.getDeviceId(), buildUserAgent(),
-                configuration.publishableKey(), storageHelper.getDeviceIdSource());
+        this.highwind =
+                new Highwind(
+                        context,
+                        "1.5.0",
+                        storageHelper.getDeviceId(),
+                        buildUserAgent(),
+                        configuration.publishableKey(),
+                        storageHelper.getDeviceIdSource());
     }
 
     private void registerLifeCycleCallbacks(Application application) {
@@ -122,13 +133,18 @@ public class Castle {
 
     /**
      * Configure Castle using the provided configuration
+     *
      * @param application Application instance
      * @param configuration CastleConfiguration
      */
     public static void configure(Application application, CastleConfiguration configuration) {
         if (instance == null) {
-            if (configuration.publishableKey() == null || !configuration.publishableKey().startsWith("pk_") || configuration.publishableKey().length() != 35) {
-                throw new RuntimeException("You must provide a valid Castle publishable key when initializing the SDK.");
+            if (configuration.publishableKey() == null
+                    || !configuration.publishableKey().startsWith("pk_")
+                    || configuration.publishableKey().length() != 35) {
+                throw new RuntimeException(
+                        "You must provide a valid Castle publishable key when initializing the"
+                            + " SDK.");
             }
             instance = new Castle(application, configuration);
             instance.registerLifeCycleCallbacks(application);
@@ -137,43 +153,61 @@ public class Castle {
 
     /**
      * Configure Castle with default configuration using publishable key
+     *
      * @param application Application instance
      * @param publishableKey Castle publishable key
      */
     public static void configure(Application application, String publishableKey) {
         if (instance == null) {
-            instance = new Castle(application, new CastleConfiguration.Builder().publishableKey(publishableKey).build());
+            instance =
+                    new Castle(
+                            application,
+                            new CastleConfiguration.Builder()
+                                    .publishableKey(publishableKey)
+                                    .build());
             instance.registerLifeCycleCallbacks(application);
         }
     }
 
     /**
      * Configure Castle with provided configuration and publishable key
+     *
      * @param application Application instance
      * @param publishableKey Castle publishable key
      * @param configuration CastleConfiguration instance
      */
-    public static void configure(Application application, String publishableKey, CastleConfiguration configuration) {
+    public static void configure(
+            Application application, String publishableKey, CastleConfiguration configuration) {
         if (instance == null) {
-            instance = new Castle(application, new CastleConfiguration.Builder(configuration).publishableKey(publishableKey).build());
+            instance =
+                    new Castle(
+                            application,
+                            new CastleConfiguration.Builder(configuration)
+                                    .publishableKey(publishableKey)
+                                    .build());
             instance.registerLifeCycleCallbacks(application);
         }
     }
 
     /**
-     * Configure Castle with default configuration, will try to get publishable key from AndroidManifest meta tag castle_publishable_key
+     * Configure Castle with default configuration, will try to get publishable key from
+     * AndroidManifest meta tag castle_publishable_key
+     *
      * @param application Application instance
      */
     public static void configure(Application application) {
         try {
             ApplicationInfo applicationInfo =
-                    application.getPackageManager()
-                            .getApplicationInfo(application.getPackageName(),
-                                    PackageManager.GET_META_DATA);
+                    application
+                            .getPackageManager()
+                            .getApplicationInfo(
+                                    application.getPackageName(), PackageManager.GET_META_DATA);
             Bundle bundle = applicationInfo.metaData;
             String publishableKey = bundle.getString("castle_publishable_key");
 
-            configure(application, new CastleConfiguration.Builder().publishableKey(publishableKey).build());
+            configure(
+                    application,
+                    new CastleConfiguration.Builder().publishableKey(publishableKey).build());
         } catch (PackageManager.NameNotFoundException e) {
             CastleLogger.e("Failed to load meta-data, NameNotFound: " + e.getMessage());
         } catch (NullPointerException e) {
@@ -183,6 +217,7 @@ public class Castle {
 
     /**
      * Track custom event with a specified name
+     *
      * @param event Event name
      */
     public static void custom(String event) {
@@ -194,6 +229,7 @@ public class Castle {
 
     /**
      * Track custom event with a specified name
+     *
      * @param event Event name
      */
     public static void custom(String event, Map<String, Object> properties) {
@@ -216,6 +252,7 @@ public class Castle {
 
     /**
      * Set user information with specified jwt encoded user. User jwt will be persisted.
+     *
      * @param userJwt encoded user jwt
      */
     public static void userJwt(String userJwt) {
@@ -226,15 +263,14 @@ public class Castle {
 
     /**
      * Get userJwt from storage, returns null if not set
+     *
      * @return user id
      */
     public static String userJwt() {
         return getInstance().storageHelper.getUserJwt();
     }
 
-    /**
-     * Reset any stored user information and flush the event queue
-     */
+    /** Reset any stored user information and flush the event queue */
     public static void reset() {
         Castle.flush();
         Castle.userJwt(null);
@@ -242,6 +278,7 @@ public class Castle {
 
     /**
      * Track screen event with a specified name
+     *
      * @param name Event name
      */
     public static void screen(String name) {
@@ -253,6 +290,7 @@ public class Castle {
 
     /**
      * Track screen event using activity title
+     *
      * @param activity Activity
      */
     public static void screen(Activity activity) {
@@ -261,6 +299,7 @@ public class Castle {
 
     /**
      * Get configured publishable key
+     *
      * @return publishable key
      */
     public static String publishableKey() {
@@ -269,6 +308,7 @@ public class Castle {
 
     /**
      * Get debug logging enabled
+     *
      * @return true of debug logging is enabled
      */
     public static boolean debugLoggingEnabled() {
@@ -277,6 +317,7 @@ public class Castle {
 
     /**
      * Get base url
+     *
      * @return Base url
      */
     public static String baseUrl() {
@@ -285,6 +326,7 @@ public class Castle {
 
     /**
      * Get request token
+     *
      * @return request token
      */
     public static String createRequestToken() {
@@ -293,22 +335,19 @@ public class Castle {
 
     /**
      * Get configuration
+     *
      * @return configuration
      */
     public static CastleConfiguration configuration() {
         return getInstance().configuration;
     }
 
-    /**
-     * Force a flush of the event queue, even if the flush limit hasn't been reached
-     */
+    /** Force a flush of the event queue, even if the flush limit hasn't been reached */
     public static void flush() {
         getInstance().eventQueue.flush();
     }
 
-    /**
-     * Force a flush if needed for a specific url, flushes if url is allowlisted
-     */
+    /** Force a flush if needed for a specific url, flushes if url is allowlisted */
     public static boolean flushIfNeeded(String url) {
         // Flush if request to allowlisted url
         if (isUrlAllowlisted(url)) {
@@ -318,9 +357,7 @@ public class Castle {
         return false;
     }
 
-    /**
-     * Get Castle headers for a specific url, returns non-empty when url is allowlisted
-     */
+    /** Get Castle headers for a specific url, returns non-empty when url is allowlisted */
     public static Map<String, String> headers(String url) {
         Map<String, String> headers = new HashMap<>();
 
@@ -331,15 +368,14 @@ public class Castle {
         return headers;
     }
 
-    /**
-     * Get Castle OkHttp interceptor
-     */
+    /** Get Castle OkHttp interceptor */
     public static CastleInterceptor castleInterceptor() {
         return new CastleInterceptor();
     }
 
     /**
      * Determine if a given url is allowlisted
+     *
      * @return url allowlist status
      */
     static boolean isUrlAllowlisted(String urlString) {
@@ -347,7 +383,8 @@ public class Castle {
             URL url = new URL(urlString);
             String baseUrl = url.getProtocol() + "://" + url.getHost() + "/";
 
-            if (Castle.configuration().baseURLAllowList() != null && !Castle.configuration().baseURLAllowList().isEmpty()) {
+            if (Castle.configuration().baseURLAllowList() != null
+                    && !Castle.configuration().baseURLAllowList().isEmpty()) {
                 if (Castle.configuration().baseURLAllowList().contains(baseUrl)) {
                     return true;
                 }
@@ -360,6 +397,7 @@ public class Castle {
 
     /**
      * Get the current size of the event queue
+     *
      * @return The current size of the event queue
      */
     public static int queueSize() {
@@ -368,15 +406,14 @@ public class Castle {
 
     /**
      * Check if queue is being flushed
+     *
      * @return True if flushing is in progress
      */
     static boolean isFlushing() {
         return getInstance().eventQueue.isFlushing();
     }
 
-    /**
-     * Destroy instance of the Castle SDK
-     */
+    /** Destroy instance of the Castle SDK */
     public static void destroy(Application application) {
         if (instance != null) {
             instance.eventQueue.destroy();
@@ -388,16 +425,18 @@ public class Castle {
 
     /**
      * Get current app versionCode
+     *
      * @return current build
      */
     static int getCurrentBuild() {
         return getInstance().appBuild;
     }
 
-
     /**
      * Get custom user agent used for requests sent to Castle API
-     * @return User agent string in format application name/version (versionCode) (Castle library version; Android version; Device name)
+     *
+     * @return User agent string in format application name/version (versionCode) (Castle library
+     *     version; Android version; Device name)
      */
     public static String userAgent() {
         return getInstance().buildUserAgent();
@@ -405,12 +444,21 @@ public class Castle {
 
     private String buildUserAgent() {
         return Utils.sanitizeHeader(
-                String.format(Locale.US, "%s/%s (%d) (Castle %s; Android %s; %s %s)",
-                        appName, appVersion, appBuild, "1.5.0", Build.VERSION.RELEASE, Build.MANUFACTURER, Build.MODEL));
+                String.format(
+                        Locale.US,
+                        "%s/%s (%d) (Castle %s; Android %s; %s %s)",
+                        appName,
+                        appVersion,
+                        appBuild,
+                        "1.5.0",
+                        Build.VERSION.RELEASE,
+                        Build.MANUFACTURER,
+                        Build.MODEL));
     }
 
     /**
      * Get current app versionName
+     *
      * @return current version
      */
     static String getCurrentVersion() {

@@ -11,15 +11,14 @@ import android.content.pm.PackageManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sample.demo_keystore.castle.api.model.CustomEvent;
+import com.sample.demo_keystore.castle.api.model.Event;
+import com.sample.demo_keystore.castle.api.model.ScreenEvent;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import com.sample.demo_keystore.castle.api.model.CustomEvent;
-import com.sample.demo_keystore.castle.api.model.Event;
-import com.sample.demo_keystore.castle.api.model.ScreenEvent;
 
 public class Utils {
     private static SimpleDateFormat formatter = null;
@@ -70,7 +69,8 @@ public class Utils {
     }
 
     static String getApplicationName(Context context) {
-        return (String) context.getPackageManager().getApplicationLabel(getApplicationInfo(context));
+        return (String)
+                context.getPackageManager().getApplicationLabel(getApplicationInfo(context));
     }
 
     static String getApplicationVersion(Context context) {

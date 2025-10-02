@@ -4,22 +4,22 @@
 
 package com.sample.demo_keystore.castle.api;
 
-import java.util.concurrent.TimeUnit;
-
 import com.sample.demo_keystore.castle.Castle;
 import com.sample.demo_keystore.castle.Utils;
 import com.sample.demo_keystore.castle.api.model.Monitor;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-/**
- * API Service for Castle APIs, do not use directly, use suitable method in
- */
+import java.util.concurrent.TimeUnit;
+
+/** API Service for Castle APIs, do not use directly, use suitable method in */
 public class CastleAPIService {
 
     private static final int CONNTECTION_TIMEOUT = 10;
@@ -32,13 +32,15 @@ public class CastleAPIService {
 
     /**
      * Get Instance of CastleAPI
+     *
      * @return Instance of CastleAPI
      */
     public static CastleAPI getInstance() {
         if (instance == null) {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .addInterceptor(new CastleAuthenticationInterceptor())
-                    .connectTimeout(CONNTECTION_TIMEOUT, TimeUnit.SECONDS);
+            OkHttpClient.Builder builder =
+                    new OkHttpClient.Builder()
+                            .addInterceptor(new CastleAuthenticationInterceptor())
+                            .connectTimeout(CONNTECTION_TIMEOUT, TimeUnit.SECONDS);
 
             if (Castle.debugLoggingEnabled()) {
                 HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -49,9 +51,10 @@ public class CastleAPIService {
             OkHttpClient okHttpClient = builder.build();
 
             Retrofit retrofit =
-                new Retrofit.Builder()
+                    new Retrofit.Builder()
                             .baseUrl(Castle.baseUrl())
-                            .addConverterFactory(GsonConverterFactory.create(Utils.getGsonInstance()))
+                            .addConverterFactory(
+                                    GsonConverterFactory.create(Utils.getGsonInstance()))
                             .client(okHttpClient)
                             .build();
 

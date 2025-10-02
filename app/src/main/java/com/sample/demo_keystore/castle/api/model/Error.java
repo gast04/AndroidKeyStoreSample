@@ -6,12 +6,11 @@ package com.sample.demo_keystore.castle.api.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Model class for Castle API errors
- */
+/** Model class for Castle API errors */
 public class Error {
     @SerializedName("message")
     String message;
+
     @SerializedName("type")
     String type;
 

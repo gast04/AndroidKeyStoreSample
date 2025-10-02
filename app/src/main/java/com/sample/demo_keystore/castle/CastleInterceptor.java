@@ -4,14 +4,14 @@
 
 package com.sample.demo_keystore.castle;
 
+import okhttp3.Interceptor;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Map;
-
-import okhttp3.Interceptor;
-import okhttp3.Request;
-import okhttp3.Response;
 
 class CastleInterceptor implements Interceptor {
     @Override
@@ -23,7 +23,7 @@ class CastleInterceptor implements Interceptor {
 
             Request.Builder builder = request.newBuilder();
 
-            Map<String,String> headers = Castle.headers(chain.request().url().toString());
+            Map<String, String> headers = Castle.headers(chain.request().url().toString());
 
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 builder.addHeader(entry.getKey(), entry.getValue());

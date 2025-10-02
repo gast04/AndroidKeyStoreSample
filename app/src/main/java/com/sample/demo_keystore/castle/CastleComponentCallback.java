@@ -5,14 +5,10 @@
 package com.sample.demo_keystore.castle;
 
 import android.content.ComponentCallbacks2;
-import android.content.pm.PackageInfo;
 import android.content.res.*;
 import android.content.res.Configuration;
 
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 class CastleComponentCallback implements ComponentCallbacks2 {
     @Override

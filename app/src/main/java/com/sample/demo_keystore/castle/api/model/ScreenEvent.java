@@ -6,13 +6,12 @@ package com.sample.demo_keystore.castle.api.model;
 
 import android.app.Activity;
 
-/**
- * Model class for screen events
- */
+/** Model class for screen events */
 public class ScreenEvent extends Event {
 
     /**
      * Create new screen event with provided name
+     *
      * @param name screen name
      */
     public ScreenEvent(String name) {
@@ -22,9 +21,13 @@ public class ScreenEvent extends Event {
 
     /**
      * Create new screen using Activity title
+     *
      * @param activity Activity
      */
     public ScreenEvent(Activity activity) {
-        this(activity.getTitle() != null ? activity.getTitle().toString() : activity.getClass().getSimpleName());
+        this(
+                activity.getTitle() != null
+                        ? activity.getTitle().toString()
+                        : activity.getClass().getSimpleName());
     }
 }

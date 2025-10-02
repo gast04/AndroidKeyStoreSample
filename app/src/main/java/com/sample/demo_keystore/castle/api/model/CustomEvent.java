@@ -5,16 +5,13 @@
 package com.sample.demo_keystore.castle.api.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.sample.demo_keystore.castle.Castle;
+import com.sample.demo_keystore.castle.CastleLogger;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.sample.demo_keystore.castle.Castle;
-import com.sample.demo_keystore.castle.CastleLogger;
-
-/**
- * Model class for events
- */
+/** Model class for events */
 public class CustomEvent extends Event {
     @SerializedName("properties")
     Map<String, Object> properties;
@@ -33,8 +30,10 @@ public class CustomEvent extends Event {
         this.type = EVENT_TYPE_CUSTOM;
 
         boolean valid = propertiesContainValidData(properties);
-        if(!valid) {
-            CastleLogger.e("Properties dictionary contains invalid data. Supported types are: String, Integer, Float, Double, Map & Null");
+        if (!valid) {
+            CastleLogger.e(
+                    "Properties dictionary contains invalid data. Supported types are: String,"
+                        + " Integer, Float, Double, Map & Null");
         } else {
             this.properties = properties;
         }
@@ -47,7 +46,7 @@ public class CustomEvent extends Event {
 
     public static boolean propertiesContainValidData(Map<String, Object> properties) {
         // Check if map is null
-        if(properties == null) {
+        if (properties == null) {
             return false;
         }
 
@@ -55,13 +54,13 @@ public class CustomEvent extends Event {
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             Object value = entry.getValue();
 
-            // If the value of of any other type than NSNumber, NSString or NSNull: validation failed
+            // If the value of of any other type than NSNumber, NSString or NSNull: validation
+            // failed
             if (!(value instanceof String
                     || value instanceof Integer
                     || value instanceof Float
                     || value instanceof Double
-                    || value == null)
-            ) {
+                    || value == null)) {
                 CastleLogger.e("Properties map contains invalid data.");
                 return false;
             }

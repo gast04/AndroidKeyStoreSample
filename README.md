@@ -22,4 +22,3 @@ app/libs/
 ├── proguard.txt
 └── R.txt
 ```
-

@@ -7,8 +7,18 @@ package com.sample.demo_keystore.castle.queue;
 import android.content.Context;
 import android.util.Log;
 
+import com.sample.demo_keystore.castle.Castle;
+import com.sample.demo_keystore.castle.CastleLogger;
+import com.sample.demo_keystore.castle.Utils;
+import com.sample.demo_keystore.castle.api.CastleAPIService;
+import com.sample.demo_keystore.castle.api.model.Event;
+import com.sample.demo_keystore.castle.api.model.Monitor;
 import com.squareup.tape2.ObjectQueue;
 import com.squareup.tape2.QueueFile;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,16 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.sample.demo_keystore.castle.Castle;
-import com.sample.demo_keystore.castle.CastleLogger;
-import com.sample.demo_keystore.castle.Utils;
-import com.sample.demo_keystore.castle.api.CastleAPIService;
-import com.sample.demo_keystore.castle.api.model.Event;
-import com.sample.demo_keystore.castle.api.model.Monitor;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class EventQueue implements Callback<Void> {
 
@@ -46,8 +46,7 @@ public class EventQueue implements Callback<Void> {
     public EventQueue(Context context) {
         try {
             init(context);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             CastleLogger.e("Failed to create queue", e);
 
             // Delete the file and try again
@@ -64,9 +63,9 @@ public class EventQueue implements Callback<Void> {
     private synchronized File getFile(Context context) {
         return getFile(context, QUEUE_FILENAME);
     }
+
     private synchronized File getFile(Context context, String filename) {
-        return new File(context.getApplicationContext().getFilesDir().getAbsoluteFile(),
-                filename);
+        return new File(context.getApplicationContext().getFilesDir().getAbsoluteFile(), filename);
     }
 
     private synchronized void init(Context context) throws IOException {
@@ -87,21 +86,23 @@ public class EventQueue implements Callback<Void> {
     }
 
     public synchronized void add(Event event) {
-        executor.execute(() -> {
-            try {
-                if (Castle.configuration().debugLoggingEnabled()) {
-                    CastleLogger.d("Tracking event " + Utils.getGsonInstance().toJson(event));
-                }
+        executor.execute(
+                () -> {
+                    try {
+                        if (Castle.configuration().debugLoggingEnabled()) {
+                            CastleLogger.d(
+                                    "Tracking event " + Utils.getGsonInstance().toJson(event));
+                        }
 
-                eventObjectQueue.add(event);
+                        eventObjectQueue.add(event);
 
-                if (needsFlush()) {
-                    flush();
-                }
-            } catch (IOException e) {
-                CastleLogger.e("Add to queue failed", e);
-            }
-        });
+                        if (needsFlush()) {
+                            flush();
+                        }
+                    } catch (IOException e) {
+                        CastleLogger.e("Add to queue failed", e);
+                    }
+                });
     }
 
     private synchronized void trim() throws IOException {
@@ -116,54 +117,57 @@ public class EventQueue implements Callback<Void> {
         CastleLogger.d("EventQueue size " + eventObjectQueue.size());
         if (!isFlushing() && (!eventObjectQueue.isEmpty())) {
             flushOngoing = true; // set flush flag before thread is started
-            executor.execute(() -> {
-                try {
-                    trim();
-
-                    Log.d("DEBUG_NIKU", "EventQueueSize: " + eventObjectQueue.size());
-                    int end = Math.min(MAX_BATCH_SIZE, eventObjectQueue.size());
-                    List<Event> subList = new ArrayList<>(end);
-                    Iterator<Event> iterator = eventObjectQueue.iterator();
-                    for (int i = 0; i < end; i++) {
+            executor.execute(
+                    () -> {
                         try {
-                            Event event = iterator.next();
+                            trim();
 
-                            if (event != null) {
-                                subList.add(event);
+                            int end = Math.min(MAX_BATCH_SIZE, eventObjectQueue.size());
+                            List<Event> subList = new ArrayList<>(end);
+                            Iterator<Event> iterator = eventObjectQueue.iterator();
+                            for (int i = 0; i < end; i++) {
+                                try {
+                                    Event event = iterator.next();
+
+                                    if (event != null) {
+                                        subList.add(event);
+                                    }
+                                } catch (Exception | Error exception) {
+                                    CastleLogger.e("Unable to read from queue", exception);
+                                }
                             }
-                        } catch (Exception exception) {
-                            CastleLogger.e("Unable to read from queue", exception);
-                        } catch (Error error) {
-                            CastleLogger.e("Unable to read from queue", error);
-                        }
-                    }
-                    List<Event> events = Collections.unmodifiableList(subList);
-                    Monitor monitor = Monitor.monitorWithEvents(events);
-                    if (monitor != null) {
-                        // CastleLogger.d("Flushing EventQueue " + end);
+                            List<Event> events = Collections.unmodifiableList(subList);
+                            Monitor monitor = Monitor.monitorWithEvents(events);
+                            if (monitor != null) {
+                                // CastleLogger.d("Flushing EventQueue " + end);
 
-                        flushCount = end;
-                        try {
-                            flushCall = CastleAPIService.getInstance().monitor(monitor);
-                        } catch (NullPointerException npe) {
-                            // Band aid for https://github.com/castle/castle-android/issues/37
-                            CastleLogger.d("Did not flush EventQueue because NPE, clearing EventQueue");
-                            eventObjectQueue.clear();
-                        }
-                        flushCall.enqueue(this);
-                    } else {
-                        CastleLogger.d("Did not flush EventQueue");
+                                flushCount = end;
+                                try {
+                                    flushCall = CastleAPIService.getInstance().monitor(monitor);
+                                } catch (NullPointerException npe) {
+                                    // Band aid for
+                                    // https://github.com/castle/castle-android/issues/37
+                                    CastleLogger.d(
+                                            "Did not flush EventQueue because NPE, clearing"
+                                                + " EventQueue");
+                                    eventObjectQueue.clear();
+                                }
+                                flushCall.enqueue(this);
+                            } else {
+                                CastleLogger.d("Did not flush EventQueue");
 
-                        // If events is empty and end is greater than zero, we just have unreadable data in the queue
-                        if (end > 0) {
-                            eventObjectQueue.clear();
-                            CastleLogger.d("Clearing EventQueue because of unreadable data");
+                                // If events is empty and end is greater than zero, we just have
+                                // unreadable data in the queue
+                                if (end > 0) {
+                                    eventObjectQueue.clear();
+                                    CastleLogger.d(
+                                            "Clearing EventQueue because of unreadable data");
+                                }
+                            }
+                        } catch (IOException exception) {
+                            CastleLogger.e("Unable to flush queue", exception);
                         }
-                    }
-                } catch (IOException exception) {
-                    CastleLogger.e("Unable to flush queue", exception);
-                }
-            });
+                    });
         }
     }
 
@@ -206,20 +210,20 @@ public class EventQueue implements Callback<Void> {
     @Override
     public synchronized void onResponse(Call<Void> call, Response<Void> response) {
         if (response.isSuccessful()) {
-            //CastleLogger.i(response.code() + " " + response.message());
-            //CastleLogger.i("Monitor request successful");
+            // CastleLogger.i(response.code() + " " + response.message());
+            // CastleLogger.i("Monitor request successful");
 
-            executor.execute(() -> {
-                remove(flushCount);
+            executor.execute(
+                    () -> {
+                        remove(flushCount);
 
-                flushed();
+                        flushed();
 
-                // Check if queue size still exceed the flush limit and if it does, flush.
-                if (needsFlush()) {
-                    Castle.flush();
-                }
-
-            });
+                        // Check if queue size still exceed the flush limit and if it does, flush.
+                        if (needsFlush()) {
+                            Castle.flush();
+                        }
+                    });
         } else {
             CastleLogger.e(response.code() + " " + response.message());
             try {

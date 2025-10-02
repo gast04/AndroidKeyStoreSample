@@ -24,16 +24,12 @@ public class CastleConfiguration {
     private String publishableKey;
     private boolean applicationLifecycleTrackingEnabled = DEFAULT_LIFECYCLE_TRACKING_ENABLED;
 
-    /**
-     * Create default configuration
-     */
+    /** Create default configuration */
     public CastleConfiguration() {
         this(new Builder());
     }
 
-    /**
-     * Create configuration with builder
-     */
+    /** Create configuration with builder */
     private CastleConfiguration(Builder builder) {
         this.debugLoggingEnabled = builder.debugLoggingEnabled();
         this.flushLimit = builder.flushLimit();
@@ -46,6 +42,7 @@ public class CastleConfiguration {
 
     /**
      * Get list of allowlisted urls
+     *
      * @return List of allowlisted urls
      */
     public List<String> baseURLAllowList() {
@@ -54,6 +51,7 @@ public class CastleConfiguration {
 
     /**
      * Get debug logging enabled
+     *
      * @return Debug logging enabled
      */
     public boolean debugLoggingEnabled() {
@@ -62,6 +60,7 @@ public class CastleConfiguration {
 
     /**
      * Get flushlimit
+     *
      * @return Flushlimit
      */
     public int flushLimit() {
@@ -70,6 +69,7 @@ public class CastleConfiguration {
 
     /**
      * Get max queue size limit
+     *
      * @return Max queue size limit
      */
     public int maxQueueLimit() {
@@ -78,6 +78,7 @@ public class CastleConfiguration {
 
     /**
      * Get publishable key
+     *
      * @return Publishable key
      */
     public String publishableKey() {
@@ -86,6 +87,7 @@ public class CastleConfiguration {
 
     /**
      * Get screen tracking enabled
+     *
      * @return Screen tracking enabled
      */
     public boolean screenTrackingEnabled() {
@@ -100,9 +102,7 @@ public class CastleConfiguration {
         return applicationLifecycleTrackingEnabled;
     }
 
-    /**
-     * Builder used for creating a configuration
-     */
+    /** Builder used for creating a configuration */
     public static final class Builder {
         private boolean debugLoggingEnabled;
         private int flushLimit;
@@ -112,9 +112,7 @@ public class CastleConfiguration {
         private List<String> baseURLAllowList;
         private boolean applicationLifecycleTrackingEnabled;
 
-        /**
-         * Create builder with defaults
-         */
+        /** Create builder with defaults */
         public Builder() {
             debugLoggingEnabled = DEFAULT_DEBUG_LOGGING_ENABLED;
             flushLimit = DEFAULT_FLUSH_LIMIT;
@@ -123,9 +121,7 @@ public class CastleConfiguration {
             applicationLifecycleTrackingEnabled = DEFAULT_LIFECYCLE_TRACKING_ENABLED;
         }
 
-        /**
-         * Create builder with values from a configuration
-         */
+        /** Create builder with values from a configuration */
         public Builder(CastleConfiguration configuration) {
             debugLoggingEnabled = configuration.debugLoggingEnabled();
             flushLimit = configuration.flushLimit();
@@ -133,11 +129,13 @@ public class CastleConfiguration {
             publishableKey = configuration.publishableKey();
             screenTrackingEnabled = configuration.screenTrackingEnabled();
             baseURLAllowList = configuration.baseURLAllowList();
-            applicationLifecycleTrackingEnabled = configuration.applicationLifecycleTrackingEnabled();
+            applicationLifecycleTrackingEnabled =
+                    configuration.applicationLifecycleTrackingEnabled();
         }
 
         /**
          * Set allowlist
+         *
          * @param baseURLAllowList
          * @return Builder
          */
@@ -149,6 +147,7 @@ public class CastleConfiguration {
 
         /**
          * Get allowlist
+         *
          * @return allowlist
          */
         public List<String> baseURLAllowList() {
@@ -157,6 +156,7 @@ public class CastleConfiguration {
 
         /**
          * Set debug logging
+         *
          * @param enabled
          * @return Builder
          */
@@ -168,6 +168,7 @@ public class CastleConfiguration {
 
         /**
          * Get debug logging
+         *
          * @return Debug logging enabled
          */
         public boolean debugLoggingEnabled() {
@@ -176,6 +177,7 @@ public class CastleConfiguration {
 
         /**
          * Get flush limit
+         *
          * @return Flush limit
          */
         public int flushLimit() {
@@ -184,6 +186,7 @@ public class CastleConfiguration {
 
         /**
          * Set flush limit
+         *
          * @param flushLimit
          * @return Builder
          */
@@ -195,6 +198,7 @@ public class CastleConfiguration {
 
         /**
          * Get max queue limit
+         *
          * @return Max queue limit
          */
         public int maxQueueLimit() {
@@ -203,6 +207,7 @@ public class CastleConfiguration {
 
         /**
          * Set max queue limit
+         *
          * @param maxQueueLimit
          * @return Builder
          */
@@ -214,6 +219,7 @@ public class CastleConfiguration {
 
         /**
          * Set publishable key
+         *
          * @param publishableKey
          * @return Builder
          */
@@ -225,6 +231,7 @@ public class CastleConfiguration {
 
         /**
          * Get publishable key
+         *
          * @return Publishable key
          */
         public String publishableKey() {
@@ -233,6 +240,7 @@ public class CastleConfiguration {
 
         /**
          * Set screen tracking enabled
+         *
          * @param enabled
          * @return Builder
          */
@@ -244,6 +252,7 @@ public class CastleConfiguration {
 
         /**
          * Get screen tracking enabled
+         *
          * @return Screen tracking enabled
          */
         public boolean screenTrackingEnabled() {
@@ -252,6 +261,7 @@ public class CastleConfiguration {
 
         /**
          * Set application lifecycle tracking enabled
+         *
          * @param enabled
          * @return Builder
          */
@@ -263,12 +273,16 @@ public class CastleConfiguration {
 
         /**
          * Get application lifecycle tracking enabled
+         *
          * @return Application lifecycle tracking enabled
          */
-        public boolean applicationLifecycleTrackingEnabled() { return applicationLifecycleTrackingEnabled; }
+        public boolean applicationLifecycleTrackingEnabled() {
+            return applicationLifecycleTrackingEnabled;
+        }
 
         /**
          * Build configuration from builder
+         *
          * @return Configuration
          */
         public CastleConfiguration build() {

@@ -6,14 +6,13 @@ package com.sample.demo_keystore.castle;
 
 import android.util.Log;
 
-/**
- * Internal logger
- */
+/** Internal logger */
 public class CastleLogger {
     private static final String TAG = "Castle";
 
     /**
      * Send an error log message
+     *
      * @param message Message to be logged
      */
     public static void e(String message) {
@@ -22,6 +21,7 @@ public class CastleLogger {
 
     /**
      * Send an error log message and throwable
+     *
      * @param message Message to be logged
      * @param throwable Throwable to be logged
      */
@@ -31,6 +31,7 @@ public class CastleLogger {
 
     /**
      * Send an warning log message
+     *
      * @param message Message to be logged
      */
     public static void w(String message) {
@@ -39,6 +40,7 @@ public class CastleLogger {
 
     /**
      * Send an debug log message
+     *
      * @param message Message to be logged
      */
     public static void d(String message) {
@@ -49,6 +51,7 @@ public class CastleLogger {
 
     /**
      * Send an info log message
+     *
      * @param message Message to be logged
      */
     public static void i(String message) {

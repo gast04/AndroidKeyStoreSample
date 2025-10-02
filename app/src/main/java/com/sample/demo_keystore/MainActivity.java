@@ -17,8 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
-import io.castle.android.Castle;
-import io.castle.android.CastleConfiguration;
+import com.sample.demo_keystore.castle.Castle;
+import com.sample.demo_keystore.castle.CastleConfiguration;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -254,15 +254,15 @@ public class MainActivity extends AppCompatActivity {
             // Log.d(constants.LOGTAG, "button ok count: " + button_ok_click_count);
 
             // first try of triggering the race condition within the flush function
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i <= 95; i++) {
                 button_ok_click_count += 1;
                 Castle.custom(
                         "ButtonOk_" + button_ok_click_count,
                         Map.of("time", currentTime, "cnt", button_ok_click_count));
             }
-            Castle.flush();
+            //Castle.flush();
 
-            /*
+
             // Execute flush operations in parallel threads
             parallelExecutor.submit(() -> {
                 Castle.flush();
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 Castle.flush();
                 Log.d(constants.LOGTAG, "Flush 4 completed");
             });
-            */
+
 
         } else {
             pin_round++;

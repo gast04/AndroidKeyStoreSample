@@ -8,10 +8,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Pair;
 
-import com.google.gson.JsonSyntaxException;
-
-import java.util.UUID;
-
 import io.castle.highwind.android.Highwind;
 
 class StorageHelper {
