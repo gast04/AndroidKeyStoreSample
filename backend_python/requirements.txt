@@ -1,0 +1,7 @@
+castle==6.1.0
+click==8.3.0
+Flask==3.1.2
+ipython==9.6.0
+pre_commit==4.3.0
+PyJWT==2.10.1
+python-dotenv==1.1.1
