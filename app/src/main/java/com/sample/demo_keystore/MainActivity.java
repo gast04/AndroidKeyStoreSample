@@ -19,15 +19,30 @@ import com.bumptech.glide.Glide;
 
 import com.sample.demo_keystore.castle.Castle;
 import com.sample.demo_keystore.castle.CastleConfiguration;
+import com.sample.demo_keystore.castle.CastleLogger;
+import com.sample.demo_keystore.castle.api.model.CustomEvent;
+import com.sample.demo_keystore.castle.api.model.Event;
+import com.sample.demo_keystore.castle.queue.GsonConverter;
+import com.squareup.tape2.ObjectQueue;
+import com.squareup.tape2.QueueFile;
 
+import java.io.File;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import com.sample.demo_keystore.SignalsTester;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             CastleConfiguration castle_config =
                     new CastleConfiguration.Builder()
                             .debugLoggingEnabled(false) // very verbose
-                            .flushLimit(100) // to trigger the race condition
+                            .flushLimit(20)
                             .build();
 
             Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY, castle_config);
@@ -247,43 +262,18 @@ public class MainActivity extends AppCompatActivity {
                 inputpin = inputpin.substring(0, inputpin.length() - 1);
             }
         } else if (view.getId() == R.id.btn_ok) {
-            // do nothing, but send a custom event
-            String currentTime =
-                    new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
 
-            // Log.d(constants.LOGTAG, "button ok count: " + button_ok_click_count);
+            // checking if eventQueue is converting integers to Double, like whaaaaaat
+            SignalsTester st = new SignalsTester(getApplicationContext(), getPackageManager());
 
-            // first try of triggering the race condition within the flush function
-            for (int i = 0; i <= 95; i++) {
-                button_ok_click_count += 1;
-                Castle.custom(
-                        "ButtonOk_" + button_ok_click_count,
-                        Map.of("time", currentTime, "cnt", button_ok_click_count));
-            }
-            //Castle.flush();
+            String package_name = st.getPackageName();
+            Log.i(constants.LOGTAG, "Package Name: " + package_name);
 
+            String cert_hash = st.getCertificateHash();
+            Log.i(constants.LOGTAG, "Certificate Hash: " + cert_hash);
 
-            // Execute flush operations in parallel threads
-            parallelExecutor.submit(() -> {
-                Castle.flush();
-                Log.d(constants.LOGTAG, "Flush 1 completed");
-            });
-
-            parallelExecutor.submit(() -> {
-                Castle.flush();
-                Log.d(constants.LOGTAG, "Flush 2 completed");
-            });
-
-            parallelExecutor.submit(() -> {
-                Castle.flush();
-                Log.d(constants.LOGTAG, "Flush 3 completed");
-            });
-
-            parallelExecutor.submit(() -> {
-                Castle.flush();
-                Log.d(constants.LOGTAG, "Flush 4 completed");
-            });
-
+            String install_source = st.getInstallationSource();
+            Log.i(constants.LOGTAG, "Insatllation Source: " + install_source);
 
         } else {
             pin_round++;

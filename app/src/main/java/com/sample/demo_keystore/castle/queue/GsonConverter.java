@@ -15,10 +15,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
-class GsonConverter<T> implements ObjectQueue.Converter<T> {
+public class GsonConverter<T> implements ObjectQueue.Converter<T> {
     private final Class<T> type;
 
-    GsonConverter(Class<T> type) {
+    public GsonConverter(Class<T> type) {
         this.type = type;
     }
 

@@ -5,6 +5,7 @@
 package com.sample.demo_keystore.castle;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -17,7 +18,13 @@ import java.lang.reflect.Type;
 
 class EventAdapter implements JsonDeserializer<Event> {
 
-    private static final Gson gson = new Gson();
+    /*
+    private static final Gson gson = new GsonBuilder()
+            .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+            .create();
+     */
+
+    private static final Gson gson = new GsonBuilder().create();
 
     @Override
     public Event deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
