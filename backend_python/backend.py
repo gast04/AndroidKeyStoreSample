@@ -36,7 +36,7 @@ def check_inputpin():
         input_pin = data.get("pin", None)
         castle_token = data.get("castle_token", None)
 
-    if not input_pin or not castle_token:
+    if not input_pin:  # or not castle_token:
         return jsonify({"valid": False, "message": "No no no no :)"}), 400
 
     try:
@@ -46,6 +46,7 @@ def check_inputpin():
         office_ip = "78.138.21.203"
         req_context = ContextPrepare.call(request)
         req_context["ip"] = office_ip
+        # req_context['X-Castle-Request-Token'] = castle_token # wtf ???
 
         result = castle_client.filter(
             {
@@ -53,16 +54,16 @@ def check_inputpin():
                 "context": req_context,
                 "type": "$registration",
                 "status": "$attempted",
-                "params": {"email": "niku.tester@castle.io"},
+                "params": {"email": os.environ.get("USER_EMAIL", "default@castle.io")},
             }
         )
 
         if result["policy"]["action"] == "deny":
             return jsonify({"valid": False, "message": "Oh hell no :o"}), 400
     except InvalidRequestTokenError as e:
-        logger.error(f"InvalidRequestTokenError: {str(e)}")
+        logger.error(f"InvalidRequestTokenError: {str(e).replace('\n', '')}")
         # Invalid request token is very likely a bad actor bypassing fingerprinting
-        return jsonify({"valid": False, "message": "Try again :("}), 400
+        return jsonify({"valid": False, "message": "Try again :("}), 401
     except CastleError as e:
         # Allow the attempt - most likely a server or timeout error
         logger.error(f"CastleError: {str(e)}")
@@ -87,7 +88,9 @@ def serve_castle_jwt():
     payload = {
         "id": os.environ.get("USER_ID", "DEFAULT_ID"),
         "email": os.environ.get("USER_EMAIL", "default@castle.io"),
+        "phone": "+1415232183",
     }
+
     token = jwt.encode(payload, os.environ["CASTLE_API_SECRET"], "HS256")
     return jsonify({"token": token})
 

@@ -16,33 +16,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-
 import com.sample.demo_keystore.castle.Castle;
 import com.sample.demo_keystore.castle.CastleConfiguration;
-import com.sample.demo_keystore.castle.CastleLogger;
-import com.sample.demo_keystore.castle.api.model.CustomEvent;
-import com.sample.demo_keystore.castle.api.model.Event;
-import com.sample.demo_keystore.castle.queue.GsonConverter;
-import com.squareup.tape2.ObjectQueue;
-import com.squareup.tape2.QueueFile;
 
-import java.io.File;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import com.sample.demo_keystore.SignalsTester;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -81,18 +65,18 @@ public class MainActivity extends AppCompatActivity {
                         });
         try {
             // This will block until the token is fetched
-            String token = tokenFuture.get();
-            Log.i(constants.LOGTAG, "Token received: " + token);
+            String user_token = tokenFuture.get();
+            Log.i(constants.LOGTAG, "Token received: " + user_token);
 
             // Place the below in your Application class onCreate method
             CastleConfiguration castle_config =
                     new CastleConfiguration.Builder()
-                            .debugLoggingEnabled(false) // very verbose
+                            .debugLoggingEnabled(true) // very verbose
                             .flushLimit(20)
                             .build();
 
             Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY, castle_config);
-            Castle.userJwt(token);
+            Castle.userJwt(user_token);
 
             String currentTime =
                     new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -263,6 +247,9 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (view.getId() == R.id.btn_ok) {
 
+            Castle.custom("installer_10", Map.of("time", "duper"));
+            Castle.flush();
+
             // checking if eventQueue is converting integers to Double, like whaaaaaat
             SignalsTester st = new SignalsTester(getApplicationContext(), getPackageManager());
 
@@ -273,7 +260,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i(constants.LOGTAG, "Certificate Hash: " + cert_hash);
 
             String install_source = st.getInstallationSource();
-            Log.i(constants.LOGTAG, "Insatllation Source: " + install_source);
+            Log.i(constants.LOGTAG, "Installation Source: " + install_source);
 
         } else {
             pin_round++;
@@ -301,9 +288,12 @@ public class MainActivity extends AppCompatActivity {
             // Disable all buttons during verification
             disableAllButtons(true);
 
+            Log.i(constants.LOGTAG, "RequestTokenName: " + Castle.requestTokenHeaderName);
+
             // pin also needs to be approved by backend
             pin_web.verifyPIN(
                     inputpin,
+                    Castle.requestTokenHeaderName,
                     Castle.createRequestToken(),
                     new PinWebHandling.PinVerificationCallback() {
                         @Override

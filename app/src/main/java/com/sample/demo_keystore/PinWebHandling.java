@@ -3,6 +3,7 @@ package com.sample.demo_keystore;
 import android.util.Log;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +35,7 @@ final class VerifyResponse {
 interface PinApi {
     @POST
     Call<VerifyResponse> verify(@Url String url, @Body VerifyRequest body);
+    // @Header("X-Castle-Request-Token") String token
 }
 
 final class TokenResponse {
@@ -63,12 +65,12 @@ public class PinWebHandling {
         backend_base_url = url;
 
         // NOTE: this logger is very verbose
-        // HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        // interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient http_client =
                 new OkHttpClient.Builder()
-                        // .addInterceptor(interceptor)
+                        .addInterceptor(interceptor)
                         .connectTimeout(10, TimeUnit.SECONDS)
                         .readTimeout(10, TimeUnit.SECONDS)
                         .writeTimeout(10, TimeUnit.SECONDS)
@@ -97,7 +99,11 @@ public class PinWebHandling {
         }
     }
 
-    public void verifyPIN(String input, String request_token, PinVerificationCallback callback) {
+    public void verifyPIN(
+            String input,
+            String request_token_name,
+            String request_token,
+            PinVerificationCallback callback) {
         Log.v(constants.FUNCTAG, "verifyPINWeb");
 
         PinApi api = retrofit.create(PinApi.class);
