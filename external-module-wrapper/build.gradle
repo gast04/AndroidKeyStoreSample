@@ -1,0 +1,91 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdk 35
+
+    namespace 'io.castle.android'
+
+    sourceSets {
+        main {
+            java.srcDirs = ['../../castle-android/castle/src/main/java']
+            manifest.srcFile '../../castle-android/castle/src/main/AndroidManifest.xml'
+        }
+    }
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 35
+        buildConfigField 'int', 'VERSION_CODE', "1"
+        buildConfigField 'String', 'VERSION_NAME', "\"" + VERSION_NAME + "\""
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
+        }
+    }
+
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']
+            }
+        }
+        unitTests.returnDefaultValues = true
+    }
+
+    compileOptions {
+        sourceCompatibility 17
+        targetCompatibility 17
+    }
+
+    lint {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    implementation 'com.squareup.tape2:tape:2.0.0-beta1'
+    api 'com.scottyab:rootbeer-lib:0.1.1'
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2'
+    api 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2'
+    api 'androidx.core:core-ktx:1.16.0'
+    implementation(name: "highwind-${highwind_version}", ext: 'aar')
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'androidx.test:rules:1.6.1'
+    testImplementation 'androidx.test.ext:junit:1.2.1'
+    testImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
+    testImplementation 'org.awaitility:awaitility:4.3.0'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestUtil 'androidx.test:orchestrator:1.5.1'
+
+    // api fileTree(dir: '../castle-android/castle/libs', include: ['*.aar'])
+    // api fileTree(dir: '../app/libs', include: ['*.aar'])  // Commented out to avoid duplicate highwind inclusion (already on line 70)
+}
+
+repositories {
+    flatDir {
+        // dirs '../../castle-android/castle/libs/'
+        dirs '../app/libs/'
+    }
+}

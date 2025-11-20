@@ -16,8 +16,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
-import com.sample.demo_keystore.castle.Castle;
-import com.sample.demo_keystore.castle.CastleConfiguration;
+
+import io.castle.android.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -246,22 +246,8 @@ public class MainActivity extends AppCompatActivity {
                 inputpin = inputpin.substring(0, inputpin.length() - 1);
             }
         } else if (view.getId() == R.id.btn_ok) {
-
             Castle.custom("installer_10", Map.of("time", "duper"));
             Castle.flush();
-
-            // checking if eventQueue is converting integers to Double, like whaaaaaat
-            SignalsTester st = new SignalsTester(getApplicationContext(), getPackageManager());
-
-            String package_name = st.getPackageName();
-            Log.i(constants.LOGTAG, "Package Name: " + package_name);
-
-            String cert_hash = st.getCertificateHash();
-            Log.i(constants.LOGTAG, "Certificate Hash: " + cert_hash);
-
-            String install_source = st.getInstallationSource();
-            Log.i(constants.LOGTAG, "Installation Source: " + install_source);
-
         } else {
             pin_round++;
             inputpin += DIGIT_MAP.get(view.getId());

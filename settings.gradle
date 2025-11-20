@@ -1,1 +1,5 @@
 include ':app'
+include ':external-module'
+
+// project(':external-module').projectDir = new File(settingsDir, '../castle-android/castle')
+project(':external-module').projectDir = new File(settingsDir, 'external-module-wrapper')
