@@ -15,3 +15,5 @@
 backend_python/.env
 app/libs
 app/release/
+
+external-module-wrapper/build/
