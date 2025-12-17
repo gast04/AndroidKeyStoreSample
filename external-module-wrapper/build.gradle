@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk 35
+    compileSdkVersion 35
 
     namespace 'io.castle.android'
 
@@ -78,14 +78,10 @@ dependencies {
     testImplementation 'org.awaitility:awaitility:4.3.0'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestUtil 'androidx.test:orchestrator:1.5.1'
-
-    // api fileTree(dir: '../castle-android/castle/libs', include: ['*.aar'])
-    // api fileTree(dir: '../app/libs', include: ['*.aar'])  // Commented out to avoid duplicate highwind inclusion (already on line 70)
 }
 
 repositories {
     flatDir {
-        // dirs '../../castle-android/castle/libs/'
         dirs '../app/libs/'
     }
 }

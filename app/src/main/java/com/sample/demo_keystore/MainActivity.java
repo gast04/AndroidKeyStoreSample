@@ -1,6 +1,7 @@
 package com.sample.demo_keystore;
 
 import android.app.AlertDialog;
+import android.app.Application;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,11 +15,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
-
 import io.castle.android.*;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -71,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
             // Place the below in your Application class onCreate method
             CastleConfiguration castle_config =
                     new CastleConfiguration.Builder()
-                            .debugLoggingEnabled(true) // very verbose
-                            .flushLimit(20)
+                            .debugLoggingEnabled(false) // very verbose
+                            .applicationLifecycleTrackingEnabled(false)
+                            .flushLimit(1)
                             .build();
 
             Castle.configure(getApplication(), BuildConfig.PUBLISHABLE_KEY, castle_config);
@@ -158,6 +157,36 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false); // Cannot be dismissed by touching outside
         dialog.show();
+    }
+
+    public void btnExecTestsClick(View view) {
+        Log.d("TESTS", "starting Threading Tests");
+
+        int threadCount = 20;
+        int eventsPerThread = 20;
+        java.util.List<Thread> threads = new java.util.ArrayList<>();
+
+        for (int threadIndex = 0; threadIndex < threadCount; threadIndex++) {
+            final int finalThreadIndex = threadIndex;
+            Thread thread = new Thread(() -> {
+                for (int eventIndex = 0; eventIndex < eventsPerThread; eventIndex++) {
+                    int eventNumber = finalThreadIndex * eventsPerThread + eventIndex;
+                    Castle.custom("test_event_" + eventNumber);
+                }
+                Castle.flush();
+            });
+            threads.add(thread);
+            thread.start();
+        }
+        
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Log.e(constants.LOGTAG, "Thread interrupted", e);
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     // **********************************************************************************************

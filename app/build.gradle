@@ -16,6 +16,11 @@ android {
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
         buildConfigField "String", "PUBLISHABLE_KEY", "\"${properties.getProperty('PUBLISHABLE_KEY')}\""
+        externalNativeBuild {
+            cmake {
+                cppFlags ''
+            }
+        }
     }
     buildTypes {
         release {
@@ -25,6 +30,12 @@ android {
         }
     }
     productFlavors {
+    }
+    externalNativeBuild {
+        cmake {
+            path file('src/main/cpp/CMakeLists.txt')
+            version '3.22.1'
+        }
     }
 }
 
