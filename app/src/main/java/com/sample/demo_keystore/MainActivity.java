@@ -1,7 +1,6 @@
 package com.sample.demo_keystore;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,8 +14,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
+
 import io.castle.android.*;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -168,17 +170,22 @@ public class MainActivity extends AppCompatActivity {
 
         for (int threadIndex = 0; threadIndex < threadCount; threadIndex++) {
             final int finalThreadIndex = threadIndex;
-            Thread thread = new Thread(() -> {
-                for (int eventIndex = 0; eventIndex < eventsPerThread; eventIndex++) {
-                    int eventNumber = finalThreadIndex * eventsPerThread + eventIndex;
-                    Castle.custom("test_event_" + eventNumber);
-                }
-                Castle.flush();
-            });
+            Thread thread =
+                    new Thread(
+                            () -> {
+                                for (int eventIndex = 0;
+                                        eventIndex < eventsPerThread;
+                                        eventIndex++) {
+                                    int eventNumber =
+                                            finalThreadIndex * eventsPerThread + eventIndex;
+                                    Castle.custom("test_event_" + eventNumber);
+                                }
+                                Castle.flush();
+                            });
             threads.add(thread);
             thread.start();
         }
-        
+
         for (Thread thread : threads) {
             try {
                 thread.join();
